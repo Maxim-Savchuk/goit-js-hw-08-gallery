@@ -56,7 +56,7 @@ function onOpenModal(evt) {
 
 function onCloseModal() {
   lightbox.classList.remove('is-open');
-  replaceAttribute('', '');
+  replaceAttribute("", "");
 
   window.removeEventListener('keydown', onEscKeyPress);
 }
