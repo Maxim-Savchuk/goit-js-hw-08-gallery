@@ -1,16 +1,15 @@
 import galleryItems from './app-items.js';
 
 const gallery = document.querySelector('.js-gallery');
-const galleryMarkup = createGalleryMarkup(galleryItems);
-
 const lightbox = document.querySelector('.js-lightbox');
 const lightboxImage = document.querySelector('.lightbox__image');
 const lightboxOverlay = document.querySelector('.lightbox__overlay');
-
 const closeModalButton = document.querySelector('[data-action="close-lightbox"]');
 
+let itemIdx = 0;
+
 function createGalleryMarkup() {
-  const markup = galleryItems.map(({ preview, original, description }) => {
+  const markup = galleryItems.map(({ preview, original, description }, idx) => {
     return `
     <li
         class="galery__item"
@@ -20,6 +19,7 @@ function createGalleryMarkup() {
             href="${original}"
         >
         <img
+            data-index="${idx}"
             class="gallery__image"
             src="${preview}"
             data-sourse="${original}"
@@ -31,12 +31,6 @@ function createGalleryMarkup() {
   return markup;
 }
 
-gallery.insertAdjacentHTML('beforeend', galleryMarkup);
-
-gallery.addEventListener('click', onOpenModal);
-closeModalButton.addEventListener('click', onCloseModal);
-lightboxOverlay.addEventListener('click', onOverlayClick);
-
 function replaceAttribute(src, alt) {
   lightboxImage.src = src;
   lightboxImage.alt = alt;
@@ -47,6 +41,8 @@ function onOpenModal(evt) {
   if (evt.target.nodeName !== 'IMG') {
     return;
   }
+
+  itemIdx = Number(evt.target.dataset.index);
 
   const sourceEl = evt.target.dataset.sourse;
   const altEl = evt.target.alt;
@@ -76,14 +72,10 @@ function onOverlayClick(evt) {
     onCloseModal();
   }
 }
-
 //Swipe
-let itemIdx = 0;
-
 function increment() {
   if (itemIdx === galleryItems.length - 1) 
     return (itemIdx = 0);
-  
   itemIdx++;
 }
 
@@ -99,3 +91,10 @@ function onSwipeKeyPress(evt) {
   const { original, description } = galleryItems[itemIdx];
   replaceAttribute(original, description);
 }
+
+const galleryMarkup = createGalleryMarkup(galleryItems);
+gallery.insertAdjacentHTML('beforeend', galleryMarkup);
+
+gallery.addEventListener('click', onOpenModal);
+closeModalButton.addEventListener('click', onCloseModal);
+lightboxOverlay.addEventListener('click', onOverlayClick);
